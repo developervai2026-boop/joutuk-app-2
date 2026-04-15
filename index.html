@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>যৌতুক ক্যালকুলেটর — সামাজিক সচেতনতা</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f5f0;
+      --surface: #ffffff;
+      --surface2: #f0efea;
+      --border: rgba(0,0,0,0.12);
+      --border2: rgba(0,0,0,0.22);
+      --text: #1a1a18;
+      --text2: #5a5a56;
+      --text3: #9a9a94;
+      --danger-bg: #fcebeb;
+      --danger-border: #f09595;
+      --danger-text: #a32d2d;
+      --warning-bg: #faeeda;
+      --warning-text: #854f0b;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1c1c1a;
+        --surface: #2a2a28;
+        --surface2: #323230;
+        --border: rgba(255,255,255,0.10);
+        --border2: rgba(255,255,255,0.20);
+        --text: #f0efe8;
+        --text2: #a8a8a0;
+        --text3: #686860;
+        --danger-bg: #501313;
+        --danger-border: #791f1f;
+        --danger-text: #f09595;
+        --warning-bg: #412402;
+        --warning-text: #fac775;
+      }
+    }
+
+    body {
+      font-family: 'Noto Sans Bengali', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 2rem 1rem 4rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 520px;
+    }
+
+    .header {
+      margin-bottom: 1.5rem;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      background: var(--warning-bg);
+      color: var(--warning-text);
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.7;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .field-group {
+      margin-bottom: 1rem;
+    }
+
+    .field-group:last-child {
+      margin-bottom: 0;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: var(--text2);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    select, input[type="number"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 0.5px solid var(--border2);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 15px;
+      font-family: 'Noto Sans Bengali', sans-serif;
+      appearance: none;
+      -webkit-appearance: none;
+      transition: border-color 0.15s;
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+    }
+
+    select:focus, input[type="number"]:focus {
+      outline: none;
+      border-color: var(--border2);
+      box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
+    }
+
+    input[type="number"]::placeholder {
+      color: var(--text3);
+    }
+
+    .hidden { display: none !important; }
+
+    .unemployed-alert {
+      padding: 14px 16px;
+      background: var(--danger-bg);
+      border: 1px solid var(--danger-border);
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      color: var(--danger-text);
+      line-height: 1.8;
+      font-weight: 500;
+    }
+
+    .calc-btn {
+      width: 100%;
+      padding: 13px;
+      background: var(--text);
+      color: var(--surface);
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 15px;
+      font-weight: 600;
+      font-family: 'Noto Sans Bengali', sans-serif;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+      margin-top: 4px;
+    }
+
+    .calc-btn:hover { opacity: 0.88; }
+    .calc-btn:active { transform: scale(0.99); }
+
+    .result-card {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem 1.25rem;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .result-label {
+      font-size: 13px;
+      color: var(--text2);
+      margin-bottom: 8px;
+    }
+
+    .result-amount {
+      font-size: 30px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .result-amount.danger { color: var(--danger-text); }
+
+    .result-formula {
+      font-size: 12px;
+      color: var(--text3);
+      margin-top: 8px;
+      line-height: 1.6;
+    }
+
+    .legal-warning {
+      padding: 16px;
+      background: var(--danger-bg);
+      border: 1.5px solid var(--danger-border);
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      color: var(--danger-text);
+      line-height: 1.8;
+      font-weight: 500;
+    }
+
+    .legal-warning strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .divider {
+      height: 0.5px;
+      background: var(--border);
+      margin: 1rem 0;
+    }
+
+    .footer {
+      margin-top: 2rem;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text3);
+      line-height: 1.7;
+    }
+
+    @media (max-width: 400px) {
+      body { padding: 1rem 0.75rem 3rem; }
+      .result-amount { font-size: 24px; }
+      h1 { font-size: 19px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <span class="tag">শিক্ষামূলক উদ্দেশ্যে</span>
+    <h1>যৌতুক ক্যালকুলেটর</h1>
+    <p class="subtitle">বাংলাদেশের প্রেক্ষাপটে যৌতুক প্রথার বাস্তব চিত্র তুলে ধরার জন্য এই টুলটি তৈরি করা হয়েছে।</p>
+  </div>
+
+  <div class="card">
+    <div class="field-group">
+      <label for="profession">পাত্রের পেশা</label>
+      <select id="profession" onchange="updateFields()">
+        <option value="">-- পেশা বেছে নিন --</option>
+        <option value="govt">সরকারি চাকরি</option>
+        <option value="private">বেসরকারি চাকরি</option>
+        <option value="armed">আর্মি / পুলিশ / বিডিআর</option>
+        <option value="business">ব্যবসায়ী</option>
+        <option value="unemployed">বেকার</option>
+      </select>
+    </div>
+
+    <!-- GOVT -->
+    <div id="govt-fields" class="hidden">
+      <div class="field-group">
+        <label for="govt-grade">গ্রেড</label>
+        <select id="govt-grade">
+          <option value="">-- গ্রেড বেছে নিন --</option>
+          <option value="1-5">গ্রেড ১–৫ (সচিব, অতিরিক্ত সচিব)</option>
+          <option value="6-10">গ্রেড ৬–১০ (উপসচিব, সিনিয়র সহকারী সচিব)</option>
+          <option value="11-15">গ্রেড ১১–১৫ (প্রথম শ্রেণির কর্মকর্তা)</option>
+          <option value="16-20">গ্রেড ১৬–২০ (দ্বিতীয় / তৃতীয় শ্রেণি)</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label for="govt-salary">মাসিক মৌলিক বেতন (টাকা)</label>
+        <input type="number" id="govt-salary" placeholder="যেমন: ৭৮০০০" min="1" />
+      </div>
+    </div>
+
+    <!-- PRIVATE -->
+    <div id="private-fields" class="hidden">
+      <div class="field-group">
+        <label for="private-salary">মাসিক আয় (টাকা)</label>
+        <input type="number" id="private-salary" placeholder="যেমন: ৩৫০০০" min="1" />
+      </div>
+    </div>
+
+    <!-- ARMED -->
+    <div id="armed-fields" class="hidden">
+      <div class="field-group">
+        <label for="armed-rank">পদমর্যাদা</label>
+        <select id="armed-rank">
+          <option value="">-- পদ বেছে নিন --</option>
+          <option value="commissioned">কমিশন্ড অফিসার (মেজর, ক্যাপ্টেন, এসপি)</option>
+          <option value="sergeant">সার্জেন্ট / ইন্সপেক্টর</option>
+          <option value="other">অন্যান্য পদ (কনস্টেবল, সিপাহী)</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label for="armed-salary">মাসিক আয় (টাকা)</label>
+        <input type="number" id="armed-salary" placeholder="যেমন: ৪৫০০০" min="1" />
+      </div>
+    </div>
+
+    <!-- BUSINESS -->
+    <div id="business-fields" class="hidden">
+      <div class="field-group">
+        <label for="business-income">বার্ষিক আয় (টাকা)</label>
+        <input type="number" id="business-income" placeholder="যেমন: ১৫০০০০০" min="1" />
+      </div>
+    </div>
+
+    <!-- UNEMPLOYED -->
+    <div id="unemployed-note" class="hidden">
+      <div class="unemployed-alert">
+        বেকার পাত্রের জন্য যৌতুক দাবি করা সামাজিক ও আইনগতভাবে অগ্রহণযোগ্য। তবুও অনেক ক্ষেত্রে ৫০,০০০–২,০০,০০০ টাকা দাবি করা হয় — এটি সম্পূর্ণ বেআইনি।
+      </div>
+    </div>
+
+    <div id="calc-btn-wrap" class="hidden" style="margin-top: 1rem;">
+      <button class="calc-btn" onclick="calculate()">যৌতুক হিসাব করো</button>
+    </div>
+
+    <div id="unemployed-btn-wrap" class="hidden" style="margin-top: 1rem;">
+      <button class="calc-btn" onclick="showUnemployedResult()">ফলাফল দেখুন</button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="result-box" class="result-card hidden">
+    <div class="result-label">আনুমানিক যৌতুক দাবির পরিমাণ</div>
+    <div class="result-amount" id="result-amount">০ টাকা</div>
+    <div class="result-formula" id="result-formula"></div>
+  </div>
+
+  <div id="unemployed-result" class="result-card hidden">
+    <div class="result-label">যৌতুক দাবির পরিমাণ</div>
+    <div class="result-amount danger">০ টাকা</div>
+    <div class="result-formula">বেকার পাত্রের জন্য বৈধভাবে দাবিযোগ্য পরিমাণ শূন্য</div>
+  </div>
+
+  <div id="legal-warning" class="legal-warning hidden">
+    <strong>⚠ আইনি সতর্কতা</strong>
+    যৌতুক গ্রহণ ও প্রদান উভয়ই দণ্ডনীয় অপরাধ। যৌতুক নিরোধ আইন ১৯৮০ অনুযায়ী সর্বোচ্চ ৫ বছরের কারাদণ্ড ও অর্থদণ্ড হতে পারে।<br /><br />
+    এই ক্যালকুলেটরটি শুধুমাত্র সামাজিক সচেতনতার জন্য তৈরি — কোনো উৎসাহ বা প্রচারের জন্য নয়।
+  </div>
+
+  <div class="footer">
+    তৈরি করা হয়েছে সামাজিক সচেতনতা বাড়ানোর উদ্দেশ্যে<br />
+    যৌতুক একটি অপরাধ — প্রতিরোধ করুন, প্রতিবাদ করুন
+  </div>
+
+</div>
+
+<script>
+  function toBn(n) {
+    const d = {'0':'০','1':'১','2':'২','3':'৩','4':'৪','5':'৫','6':'৬','7':'৭','8':'৮','9':'৯'};
+    return Math.round(n).toLocaleString('en-IN').replace(/[0-9]/g, ch => d[ch]);
+  }
+
+  function hideAll() {
+    ['govt-fields','private-fields','armed-fields','business-fields','unemployed-note',
+     'calc-btn-wrap','unemployed-btn-wrap','result-box','unemployed-result','legal-warning']
+      .forEach(id => document.getElementById(id).classList.add('hidden'));
+  }
+
+  function updateFields() {
+    hideAll();
+    const p = document.getElementById('profession').value;
+    if (p === 'unemployed') {
+      document.getElementById('unemployed-note').classList.remove('hidden');
+      document.getElementById('unemployed-btn-wrap').classList.remove('hidden');
+    } else if (p) {
+      document.getElementById(p + '-fields').classList.remove('hidden');
+      document.getElementById('calc-btn-wrap').classList.remove('hidden');
+    }
+  }
+
+  function showUnemployedResult() {
+    document.getElementById('unemployed-result').classList.remove('hidden');
+    document.getElementById('legal-warning').classList.remove('hidden');
+    document.getElementById('legal-warning').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function calculate() {
+    const p = document.getElementById('profession').value;
+    let amount = 0, formula = '';
+
+    if (p === 'govt') {
+      const grade = document.getElementById('govt-grade').value;
+      const salary = parseFloat(document.getElementById('govt-salary').value);
+      if (!grade || !salary || salary <= 0) { alert('অনুগ্রহ করে গ্রেড ও বেতন সঠিকভাবে পূরণ করুন।'); return; }
+      const annual = salary * 12;
+      const mults = {'1-5': 3, '6-10': 2.5, '11-15': 2, '16-20': 1.5};
+      const mult = mults[grade];
+      amount = annual * mult;
+      formula = `বাৎসরিক মৌলিক বেতন ${toBn(annual)} টাকা × ${mult} = ${toBn(amount)} টাকা`;
+
+    } else if (p === 'private') {
+      const salary = parseFloat(document.getElementById('private-salary').value);
+      if (!salary || salary <= 0) { alert('অনুগ্রহ করে মাসিক আয় পূরণ করুন।'); return; }
+      const annual = salary * 12;
+      const mult = salary >= 50000 ? 2 : salary >= 25000 ? 1.5 : 1;
+      amount = annual * mult;
+      formula = `বাৎসরিক আয় ${toBn(annual)} টাকা × ${mult} = ${toBn(amount)} টাকা`;
+
+    } else if (p === 'armed') {
+      const rank = document.getElementById('armed-rank').value;
+      const salary = parseFloat(document.getElementById('armed-salary').value);
+      if (!rank || !salary || salary <= 0) { alert('অনুগ্রহ করে পদ ও আয় সঠিকভাবে পূরণ করুন।'); return; }
+      const annual = salary * 12;
+      const mults = {'commissioned': 3.5, 'sergeant': 3, 'other': 2.5};
+      const mult = mults[rank];
+      amount = annual * mult;
+      formula = `বাৎসরিক আয় ${toBn(annual)} টাকা × ${mult} = ${toBn(amount)} টাকা`;
+
+    } else if (p === 'business') {
+      const income = parseFloat(document.getElementById('business-income').value);
+      if (!income || income <= 0) { alert('অনুগ্রহ করে বার্ষিক আয় পূরণ করুন।'); return; }
+      const mult = income > 2000000 ? 2.5 : income >= 1000000 ? 2 : income >= 500000 ? 1.5 : 1;
+      amount = income * mult;
+      formula = `বাৎসরিক আয় ${toBn(income)} টাকা × ${mult} = ${toBn(amount)} টাকা`;
+    }
+
+    document.getElementById('result-amount').textContent = toBn(amount) + ' টাকা';
+    document.getElementById('result-formula').textContent = formula;
+    document.getElementById('result-box').classList.remove('hidden');
+    document.getElementById('legal-warning').classList.remove('hidden');
+    document.getElementById('result-box').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+</script>
+
+</body>
+</html>
